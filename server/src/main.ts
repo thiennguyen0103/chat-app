@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { graphqlUploadExpress } from 'graphql-upload-ts';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -38,6 +39,7 @@ async function bootstrap() {
       },
     }),
   );
+  app.useLogger(app.get(Logger));
   await app.listen(3001);
 }
 bootstrap();

@@ -6,9 +6,11 @@ import * as Joi from 'joi';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
+    LoggerModule,
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       imports: [ConfigModule, AppModule],
       inject: [ConfigService],
