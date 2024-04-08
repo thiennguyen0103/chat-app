@@ -30,7 +30,7 @@ export class AuthService {
     let payload;
     try {
       payload = this.jwtService.verify(refreshToken, {
-        secret: this.configService.get<string>('REFRESH_TOKEN_SECRET'),
+        secret: this.configService.get<string>('JWT_SECRET'),
       });
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired refresh token');
@@ -62,20 +62,19 @@ export class AuthService {
       sub: user.id,
     };
 
-    const accessToken = this.jwtService.sign({
-      ...payload,
-      exp: '150sec',
+    const accessToken = this.jwtService.sign(payload, {
+      secret: this.configService.get<string>('JWT_SECRET'),
     });
 
     const refreshToken = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('REFRESH_TOKEN_SECRET'),
+      secret: this.configService.get<string>('JWT_SECRET'),
       expiresIn: '7d',
     });
 
     response.cookie('access_token', accessToken, { httpOnly: true });
     response.cookie('refresh_token', refreshToken, { httpOnly: true });
 
-    return user;
+    return { user };
   }
 
   async validateUser(loginDto: LoginDto) {
@@ -100,7 +99,7 @@ export class AuthService {
       },
     });
 
-    if (!existingUser) {
+    if (existingUser) {
       throw new BadRequestException({ email: 'Email already in use' });
     }
 
@@ -116,20 +115,14 @@ export class AuthService {
     return this.issueTokens(user, res);
   }
 
-  async login(loginDto: LoginDto, res: Response) {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        email: loginDto.email,
-      },
-    });
-
+  async login(loginDto: LoginDto, response: Response) {
+    const user = await this.validateUser(loginDto);
     if (!user) {
       throw new BadRequestException({
         invalidCredentials: 'Invalid credentials',
       });
     }
-
-    return this.issueTokens(user, res);
+    return this.issueTokens(user, response);
   }
 
   async logout(res: Response) {
