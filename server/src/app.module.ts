@@ -31,7 +31,11 @@ const pubSub = new RedisPubSub({
         configService: ConfigService,
         tokenService: TokenService,
       ) => ({
-        context: ({ req, res }) => ({ req, res }),
+        context: ({ req, res }) => ({
+          req,
+          res,
+          pubSub, // inject pubSub into context
+        }),
         playground: true,
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
         sortSchema: true,
