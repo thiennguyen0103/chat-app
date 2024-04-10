@@ -11,6 +11,8 @@ import { PrismaService } from 'src/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
+import { TokenPayload } from 'src/interface/token-payload.interface';
+import { PinoLogger } from 'nestjs-pino';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +20,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
     private readonly configService: ConfigService,
-  ) {}
+    private readonly logger: PinoLogger,
+  ) {
+    logger.setContext(AuthService.name);
+  }
 
   async refreshToken(req: Request, res: Response) {
     const refreshToken = req.cookies['refresh_token'];
@@ -30,7 +35,7 @@ export class AuthService {
     let payload;
     try {
       payload = this.jwtService.verify(refreshToken, {
-        secret: this.configService.get<string>('JWT_SECRET'),
+        secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
       });
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired refresh token');
@@ -57,22 +62,29 @@ export class AuthService {
   }
 
   private async issueTokens(user: User, response: Response) {
-    const payload = {
+    const payload: TokenPayload = {
       userName: user.fullName,
       sub: user.id,
     };
 
+    const expires = new Date();
+    expires.setSeconds(
+      expires.getSeconds() + this.configService.get('JWT_EXPIRATION'),
+    );
+
     const accessToken = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_SECRET'),
+      secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
+      expiresIn: '5m',
     });
 
     const refreshToken = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_SECRET'),
+      secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
       expiresIn: '7d',
     });
 
-    response.cookie('access_token', accessToken, { httpOnly: true });
+    response.cookie('access_token', accessToken, { httpOnly: true, expires });
     response.cookie('refresh_token', refreshToken, { httpOnly: true });
+    // console.log(response.cookie);
 
     return { user };
   }

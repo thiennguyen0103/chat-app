@@ -27,7 +27,8 @@ import { LoggerModule } from './logger/logger.module';
       isGlobal: true,
       validationSchema: Joi.object({
         DATABASE_URL: Joi.string().required(),
-        JWT_SECRET: Joi.string().required(),
+        JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
+        JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
         JWT_EXPIRATION: Joi.string().required(),
         APP_URL: Joi.string().required(),
       }),

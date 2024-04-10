@@ -15,9 +15,15 @@ export class UserService {
       });
     }
 
-    await this.prisma.user.update({
+    const user = await this.prisma.user.update({
       where: { id: userId },
       data: { fullName },
     });
+
+    return user;
+  }
+
+  async findOne(userId: string) {
+    return this.prisma.user.findUnique({ where: { id: userId } });
   }
 }
