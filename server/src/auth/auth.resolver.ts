@@ -2,10 +2,11 @@ import { BadRequestException, UseFilters } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
-import { LoginResponse, RegisterResponse } from './entities/auth.entity';
+import { LoginDto } from './dto/login.input';
+import { RegisterDto } from './dto/register.input';
 import { GraphQLErrorFilter } from 'src/filter/custom-exception.filter';
+import { RegisterResponse } from './dto/register-reponse.dto';
+import { LoginResponse } from './dto/login-response.dto';
 
 @UseFilters(GraphQLErrorFilter)
 @Resolver()

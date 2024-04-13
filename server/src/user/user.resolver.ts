@@ -6,8 +6,8 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload-ts';
 import { join } from 'path';
 import { GraphqlAuthGuard } from 'src/guard/graphql-auth.guard';
 import { v4 as uuidv4 } from 'uuid';
-import { User } from './entities/user.entity';
 import { UserService } from './user.service';
+import { UserResponse } from './dto/user-response.dto';
 
 @Resolver()
 export class UserResolver {
@@ -19,7 +19,7 @@ export class UserResolver {
   }
 
   @UseGuards(GraphqlAuthGuard)
-  @Mutation(() => User)
+  @Mutation(() => UserResponse)
   async updateProfile(
     @Args('fullName') fullName: string,
     @Args('file', { type: () => GraphQLUpload, nullable: true })

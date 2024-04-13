@@ -13,7 +13,7 @@ input LoginDto {
 }
 
 type LoginResponse {
-  user: User!
+  user: UserResponse!
 }
 
 type Mutation {
@@ -21,7 +21,7 @@ type Mutation {
   logout: String!
   refreshToken: String!
   register(registerInput: RegisterDto!): RegisterResponse!
-  updateProfile(file: Upload, fullName: String!): User!
+  updateProfile(file: Upload, fullName: String!): UserResponse!
 }
 
 type Query {
@@ -36,13 +36,13 @@ input RegisterDto {
 }
 
 type RegisterResponse {
-  user: User
+  user: UserResponse
 }
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
-type User {
+type UserResponse {
   avatarUrl: String
   createdAt: DateTime
   email: String!

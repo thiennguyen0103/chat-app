@@ -8,9 +8,9 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { Request, Response } from 'express';
 import { PrismaService } from 'src/prisma.service';
-import { LoginDto } from './dto/login.dto';
+import { LoginDto } from './dto/login.input';
 import * as bcrypt from 'bcrypt';
-import { RegisterDto } from './dto/register.dto';
+import { RegisterDto } from './dto/register.input';
 import { TokenPayload } from 'src/interface/token-payload.interface';
 import { PinoLogger } from 'nestjs-pino';
 
@@ -84,7 +84,6 @@ export class AuthService {
 
     response.cookie('access_token', accessToken, { httpOnly: true, expires });
     response.cookie('refresh_token', refreshToken, { httpOnly: true });
-    // console.log(response.cookie);
 
     return { user };
   }
