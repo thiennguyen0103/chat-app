@@ -1,16 +1,17 @@
-import "@/styles/globals.css"
-import { Inter as FontSans } from "next/font/google"
+import "@/styles/globals.css";
+import { Inter as FontSans } from "next/font/google";
 
-import { cn } from "@/lib/utils"
-import { PropsWithChildren } from "react"
+import Loader from "@/components/loading";
+import { cn } from "@/lib/utils";
+import { PropsWithChildren, Suspense } from "react";
+import { ApolloClientProvider } from "@/providers/apollo-provider";
 
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
-})
+});
 
-export default function RootLayout({ children }: PropsWithChildren)
-{
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
@@ -20,8 +21,10 @@ export default function RootLayout({ children }: PropsWithChildren)
           fontSans.variable
         )}
       >
-        {children}
+        <ApolloClientProvider>
+          <Suspense fallback={<Loader />}>{children}</Suspense>
+        </ApolloClientProvider>
       </body>
     </html>
-  )
+  );
 }

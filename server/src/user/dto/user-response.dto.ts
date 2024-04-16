@@ -2,8 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class UserResponse {
-  @Field({ nullable: true })
-  id?: string;
+  @Field()
+  id: string;
 
   @Field()
   fullName: string;

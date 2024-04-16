@@ -7,6 +7,7 @@ import { RegisterDto } from './dto/register.input';
 import { GraphQLErrorFilter } from 'src/filter/custom-exception.filter';
 import { RegisterResponse } from './dto/register-reponse.dto';
 import { LoginResponse } from './dto/login-response.dto';
+import { RefreshTokenResponse } from './dto/refresh-token-response.dto';
 
 @UseFilters(GraphQLErrorFilter)
 @Resolver()
@@ -39,7 +40,7 @@ export class AuthResolver {
     return this.authService.logout(context.res);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => RefreshTokenResponse)
   async refreshToken(@Context() context: { req: Request; res: Response }) {
     try {
       return this.authService.refreshToken(context.req, context.res);

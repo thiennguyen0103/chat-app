@@ -18,19 +18,19 @@ export class UserResolver {
     return 'Hello World!';
   }
 
-  @UseGuards(GraphqlAuthGuard)
-  @Mutation(() => UserResponse)
-  async updateProfile(
-    @Args('fullName') fullName: string,
-    @Args('file', { type: () => GraphQLUpload, nullable: true })
-    file: FileUpload,
-    @Context() context: { req: Request },
-  ) {
-    const imageUrl = file ? await this.storeImageAndGetUrl(file) : null;
-    const userId = context.req.user.sub;
+  // @UseGuards(GraphqlAuthGuard)
+  // @Mutation(() => UserResponse)
+  // async updateProfile(
+  //   @Args('fullName') fullName: string,
+  //   @Args('file', { type: () => GraphQLUpload, nullable: true })
+  //   file: FileUpload,
+  //   @Context() context: { req: Request },
+  // ) {
+  //   const imageUrl = file ? await this.storeImageAndGetUrl(file) : null;
+  //   const userId = context.req.user.sub;
 
-    return this.userService.updateProfile(userId, fullName, imageUrl);
-  }
+  //   return this.userService.updateProfile(userId, fullName, imageUrl);
+  // }
 
   private async storeImageAndGetUrl(file: FileUpload) {
     const { createReadStream, fieldName } = file;

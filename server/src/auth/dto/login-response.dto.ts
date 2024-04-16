@@ -5,4 +5,10 @@ import { UserResponse } from 'src/user/dto/user-response.dto';
 export class LoginResponse {
   @Field(() => UserResponse)
   user: UserResponse;
+
+  @Field(() => String)
+  accessToken: string;
+
+  @Field(() => String)
+  refreshToken: string;
 }

@@ -35,7 +35,7 @@ export class AuthService {
     let payload;
     try {
       payload = this.jwtService.verify(refreshToken, {
-        secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
+        secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
       });
     } catch (error) {
       throw new UnauthorizedException('Invalid or expired refresh token');
@@ -49,16 +49,21 @@ export class AuthService {
       throw new BadRequestException('User no longer exists');
     }
 
-    const expiresIn = 15000;
+    const expiresIn = 3600;
     const expiration = Math.floor(Date.now() / 1000) + expiresIn;
 
-    const accessToken = this.jwtService.sign({
-      ...payload,
-      exp: expiration,
-    });
+    const accessToken = this.jwtService.sign(
+      {
+        ...payload,
+        exp: expiration,
+      },
+      {
+        secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
+      },
+    );
 
     res.cookie('access_token', accessToken, { httpOnly: true });
-    return accessToken;
+    return { accessToken };
   }
 
   private async issueTokens(user: User, response: Response) {
@@ -85,7 +90,7 @@ export class AuthService {
     response.cookie('access_token', accessToken, { httpOnly: true, expires });
     response.cookie('refresh_token', refreshToken, { httpOnly: true });
 
-    return { user };
+    return { user, accessToken, refreshToken };
   }
 
   async validateUser(loginDto: LoginDto) {
