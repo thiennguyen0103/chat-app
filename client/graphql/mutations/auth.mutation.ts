@@ -17,10 +17,10 @@ export const LOGIN_MUTATION = gql(`
 }
 `);
 
-export const REFRESH_TOKEN = gql(`
-  mutation RefreshToken() {
+export const REFRESH_TOKEN_MUTATION = gql(`
+  mutation {
     refreshToken {
-      accessToken
+        accessToken
     }
   }
 `);
