@@ -5,6 +5,8 @@ import Loader from "@/components/loading";
 import { cn } from "@/lib/utils";
 import { PropsWithChildren, Suspense } from "react";
 import { ApolloClientProvider } from "@/providers/apollo-provider";
+import { Sidebar } from "@/components/sidebar";
+import { ThemeProvider } from "next-themes";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -18,11 +20,20 @@ export default function RootLayout({ children }: PropsWithChildren) {
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
+          fontSans.variable,
         )}
       >
         <ApolloClientProvider>
-          <Suspense fallback={<Loader />}>{children}</Suspense>
+          <Suspense fallback={<Loader />}>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem={false}
+              storageKey="chat-theme"
+            >
+              {children}
+            </ThemeProvider>
+          </Suspense>
         </ApolloClientProvider>
       </body>
     </html>

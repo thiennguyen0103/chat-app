@@ -23,14 +23,9 @@ loadDevMessages();
 
 async function refreshToken(client: ApolloClient<NormalizedCacheObject>) {
   try {
-    const { data } = await client.mutate({
+    await client.mutate({
       mutation: REFRESH_TOKEN_MUTATION,
     });
-    const newAccessToken = data?.refreshToken?.accessToken;
-    if (!newAccessToken) {
-      throw new Error("New access token not received.");
-    }
-    return `Bearer ${newAccessToken}`;
   } catch (err) {
     throw new Error("Error getting new access token.");
   }
@@ -39,23 +34,23 @@ async function refreshToken(client: ApolloClient<NormalizedCacheObject>) {
 let retryCount = 0;
 const maxRetry = 3;
 
-const wsLink = new WebSocketLink({
-  uri: `ws://localhost:3000/graphql`,
-  options: {
-    reconnect: true,
-    connectionParams: {
-      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-    },
-  },
-});
+// const wsLink = new WebSocketLink({
+//   uri: `ws://localhost:3000/graphql`,
+//   options: {
+//     reconnect: true,
+//     connectionParams: {
+//       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+//     },
+//   },
+// });
 
-const uploadLink = createUploadLink({
-  uri: "http://localhost:3000/graphql",
-  credentials: "include",
-  headers: {
-    "apollo-require-preflight": "true",
-  },
-});
+// const uploadLink = createUploadLink({
+//   uri: "http://localhost:3000/graphql",
+//   credentials: "include",
+//   headers: {
+//     "apollo-require-preflight": "true",
+//   },
+// });
 
 const errorLink = onError(({ graphQLErrors, operation, forward }) => {
   if (graphQLErrors) {
@@ -91,18 +86,18 @@ const errorLink = onError(({ graphQLErrors, operation, forward }) => {
   }
 });
 
-const link = split(
-  // Split based on operation type
-  ({ query }) => {
-    const definition = getMainDefinition(query);
-    return (
-      definition.kind === "OperationDefinition" &&
-      definition.operation === "subscription"
-    );
-  },
-  wsLink,
-  ApolloLink.from([errorLink, uploadLink])
-);
+// const link = split(
+//   // Split based on operation type
+//   ({ query }) => {
+//     const definition = getMainDefinition(query);
+//     return (
+//       definition.kind === "OperationDefinition" &&
+//       definition.operation === "subscription"
+//     );
+//   },
+//   wsLink,
+//   ApolloLink.from([errorLink, uploadLink])
+// );
 
 const client = new ApolloClient({
   uri: "http://localhost:3001/graphql",
